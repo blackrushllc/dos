@@ -1,0 +1,2 @@
+Hello from DOS!
+Phase 1 is working.
