@@ -65,6 +65,9 @@ impl DosClient {
     }
 
     pub async fn read_range(&self, path: &str, start: u64, len: u64) -> Result<Vec<u8>, DosError> {
+        if len == 0 {
+            return Ok(vec![]);
+        }
         let url = format!("{}/v1/fs/read", self.base);
         let end = start + len - 1;
         let rb = self.http.get(url).query(&[("path", path)]).header(RANGE, format!("bytes={}-{}", start, end));

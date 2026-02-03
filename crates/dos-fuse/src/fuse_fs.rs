@@ -15,6 +15,7 @@ pub struct DosFuse {
     client: DosClient,
     remote_root: String,
     ino_to_path: Mutex<HashMap<u64, String>>,
+    rt: tokio::runtime::Runtime,
 }
 
 impl DosFuse {
@@ -26,6 +27,7 @@ impl DosFuse {
             client,
             remote_root: rr,
             ino_to_path: Mutex::new(map),
+            rt: tokio::runtime::Runtime::new().expect("Failed to create tokio runtime"),
         }
     }
 
@@ -77,8 +79,8 @@ impl DosFuse {
             kind,
             perm: if matches!(st.kind, NodeKind::Dir) { 0o555 } else { 0o444 },
             nlink: 1,
-            uid: unsafe { libc::getuid() },
-            gid: unsafe { libc::getgid() },
+            uid: get_uid(),
+            gid: get_gid(),
             rdev: 0,
             flags: 0,
             blksize: 512,
@@ -95,8 +97,7 @@ impl Filesystem for DosFuse {
         };
         let full = Self::join_child(&parent_path, &name);
 
-        let rt = tokio::runtime::Runtime::new().unwrap();
-        let res = rt.block_on(self.client.stat(&full));
+        let res = self.rt.block_on(self.client.stat(&full));
 
         match res {
             Ok(st) => {
@@ -113,8 +114,7 @@ impl Filesystem for DosFuse {
             reply.error(ENOENT);
             return;
         };
-        let rt = tokio::runtime::Runtime::new().unwrap();
-        let res = rt.block_on(self.client.stat(&path));
+        let res = self.rt.block_on(self.client.stat(&path));
 
         match res {
             Ok(st) => {
@@ -133,8 +133,7 @@ impl Filesystem for DosFuse {
             return;
         };
 
-        let rt = tokio::runtime::Runtime::new().unwrap();
-        let res = rt.block_on(self.client.list(&path));
+        let res = self.rt.block_on(self.client.list(&path));
 
         if res.is_err() {
             reply.error(ENOENT);
@@ -175,10 +174,9 @@ impl Filesystem for DosFuse {
             reply.error(ENOENT);
             return;
         };
-        let rt = tokio::runtime::Runtime::new().unwrap();
         let off = offset.max(0) as u64;
         let len = (size as u64).max(1);
-        let res = rt.block_on(self.client.read_range(&path, off, len));
+        let res = self.rt.block_on(self.client.read_range(&path, off, len));
         match res {
             Ok(data) => reply.data(&data),
             Err(_) => reply.error(ENOENT),
@@ -207,4 +205,26 @@ fn normalize_root(input: &str) -> String {
         s = s.trim_end_matches('/').to_string();
     }
     s
+}
+
+fn get_uid() -> u32 {
+    #[cfg(unix)]
+    {
+        unsafe { libc::getuid() }
+    }
+    #[cfg(not(unix))]
+    {
+        0
+    }
+}
+
+fn get_gid() -> u32 {
+    #[cfg(unix)]
+    {
+        unsafe { libc::getgid() }
+    }
+    #[cfg(not(unix))]
+    {
+        0
+    }
 }
