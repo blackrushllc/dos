@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOS - Disk Operating Service</title>
+    <style>
+        :root {
+            --primary: #00ff41;
+            --primary-glow: rgba(0, 255, 65, 0.5);
+            --bg: #0a0a0a;
+            --text: #e0e0e0;
+            --card-bg: #141414;
+            --accent: #007bff;
+            --border: #2a2a2a;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            padding: 6rem 0 4rem;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 7rem;
+            margin: 0;
+            color: var(--primary);
+            text-shadow: 0 0 20px var(--primary-glow);
+            font-family: 'Courier New', Courier, monospace;
+            letter-spacing: -5px;
+            animation: pulse 4s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { text-shadow: 0 0 10px var(--primary-glow); }
+            to { text-shadow: 0 0 30px var(--primary-glow); }
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            color: #888;
+            margin-top: 1rem;
+            font-weight: 300;
+        }
+
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 3rem;
+            padding: 0.8rem 2rem;
+            background: transparent;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            border: 1px solid var(--primary);
+            border-radius: 50px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .github-link:hover {
+            background: var(--primary);
+            color: var(--bg);
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: translateY(-2px);
+        }
+
+        section {
+            margin: 6rem 0;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            color: var(--text);
+            margin-bottom: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        h2 span {
+            color: var(--primary);
+        }
+
+        .about-text {
+            font-size: 1.25rem;
+            color: #b0b0b0;
+            max-width: 800px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+            transform-origin: left;
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            margin: 0;
+            color: #999;
+            font-size: 1.05rem;
+        }
+
+        .ecosystem-highlight {
+            background: linear-gradient(135deg, #111, #050505);
+            padding: 4rem;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            text-align: center;
+            position: relative;
+        }
+
+        .ecosystem-highlight h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .ecosystem-highlight p {
+            font-size: 1.2rem;
+            color: #b0b0b0;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        footer {
+            text-align: center;
+            padding: 8rem 0 4rem;
+            border-top: 1px solid var(--border);
+            color: #555;
+        }
+
+        .syndorela-container {
+            margin-top: 4rem;
+            min-height: 100px;
+        }
+
+        code {
+            background: #1a1a1a;
+            color: var(--primary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 4rem; letter-spacing: -2px; }
+            .container { padding: 1.5rem; }
+            section { margin: 4rem 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>DOS</h1>
+            <p class="tagline">Disk Operating Service: Reimagining the Network Drive</p>
+            <a href="https://github.com/blackrushllc/dos" class="github-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 10px;">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+                Github Repository
+            </a>
+        </header>
+
+        <section id="intro">
+            <h2>The <span>Boringly Simple</span> File System.</h2>
+            <div class="about-text">
+                <p>
+                    DOS is a high-performance, internet-native Disk Operating Service. It allows you to mount remote file shares 
+                    directly into your operating system's native file explorer as if they were local hardware. 
+                </p>
+                <p>
+                    Built with <code>Rust</code> for uncompromising safety and speed, DOS leverages user-space filesystem technologies 
+                    like FUSE and WinFSP to provide a seamless, driver-less experience across Windows, macOS, and Linux.
+                </p>
+            </div>
+        </section>
+
+        <section id="ecosystem">
+            <div class="ecosystem-highlight">
+                <h3>The Syndorela Ecosystem</h3>
+                <p>
+                    DOS is a cornerstone of the <strong>Syndorela ecosystem</strong>. We believe in empowering users to distribute virtual disk drives 
+                    in any manner they see fit, across all kinds of environments. Whether you're bridging legacy infrastructure or 
+                    building the next generation of distributed apps, DOS is the fabric that connects your data.
+                </p>
+            </div>
+        </section>
+
+        <section id="use-cases">
+            <h2>Infinite <span>Use Cases</span></h2>
+            <div class="card-grid">
+                <div class="card">
+                    <h3>Legacy Migration Bridge</h3>
+                    <p>
+                        Map network drives for legacy desktop apps that depend on local disk I/O. Use DOS as an intermediate layer for code generation and data migration, allowing old code to run on a modern tech stack without modification.
+                    </p>
+                </div>
+                <div class="card">
+                    <h3>Hybrid Cloud Orchestration</h3>
+                    <p>
+                        Expose cloud-based storage buckets as local drive letters for legacy build systems and CI/CD pipelines that require standard filesystem paths.
+                    </p>
+                </div>
+                <div class="card">
+                    <h3>Global Media Workflow</h3>
+                    <p>
+                        Enable real-time collaboration on massive video assets. Producers in London and editors in Tokyo can work on the same <code>P:</code> drive with automatic conflict resolution and high-speed range reads.
+                    </p>
+                </div>
+                <div class="card">
+                    <h3>IoT Edge Aggregator</h3>
+                    <p>
+                        Collect logs and telemetry from thousands of remote devices directly into a mounted share. Your analytics engine sees a single, constantly growing local directory.
+                    </p>
+                </div>
+                <div class="card">
+                    <h3>Ephemeral Dev Environments</h3>
+                    <p>
+                        Instantly provision project-specific virtual drives for new developers. One <code>dosctl join</code> command and they have every asset they need, perfectly mounted and ready to go.
+                    </p>
+                </div>
+                <div class="card">
+                    <h3>Secure "Air-Gapped" Over IP</h3>
+                    <p>
+                        Create encrypted, private shares that only exist when the DOS client is active. Perfect for temporary high-security collaboration without the footprint of a traditional VPN.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 Blackrush LLC. DOS: Disk Operating Service.</p>
+            <div class="syndorela-container">
+                <script src="https://syndorela.com/embed/syndorela-banner.js"></script>
+                <syndorela-banner top-notice="1" notice-duration="15"></syndorela-banner>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
