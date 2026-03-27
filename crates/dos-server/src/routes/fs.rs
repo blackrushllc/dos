@@ -101,10 +101,11 @@ async fn del(
 }
 
 async fn attrib(
-    State(_state): State<AppState>,
-    _headers: HeaderMap,
+    State(state): State<AppState>,
+    headers: HeaderMap,
     Json(_req): Json<AttribReq>,
 ) -> Result<Json<OkResp>, (StatusCode, String)> {
+    require_auth(&state, &headers)?;
     // MVP: accept but do nothing (you'll store metadata later)
     // Still useful for CLI demos.
     // In a later step: store in sqlite or sidecar xattr.
@@ -142,6 +143,12 @@ async fn read(
         return Err((StatusCode::BAD_REQUEST, "not a file".into()));
     }
     let size = meta.len();
+    if size == 0 {
+        let mut resp = Response::new(Body::empty());
+        let h = resp.headers_mut();
+        h.insert(axum::http::header::ACCEPT_RANGES, "bytes".parse().unwrap());
+        return Ok(resp);
+    }
 
     // Parse Range header: bytes=start-end
     let mut start: u64 = 0;

@@ -119,7 +119,7 @@ async fn main() -> anyhow::Result<()> {
             let client = DosClient::new(&base_url).with_token(token);
             let st = client.stat(&path).await?;
             let size = st.size.unwrap_or(0);
-            let data = client.read_range(&path, 0, size.max(1)).await?;
+            let data = client.read_range(&path, 0, size).await?;
             print!("{}", String::from_utf8_lossy(&data));
         }
         Cmd::Put { base_url, token, local, remote } => {
@@ -132,7 +132,7 @@ async fn main() -> anyhow::Result<()> {
             let client = DosClient::new(&base_url).with_token(token);
             let st = client.stat(&remote).await?;
             let size = st.size.unwrap_or(0);
-            let data = client.read_range(&remote, 0, size.max(1)).await?;
+            let data = client.read_range(&remote, 0, size).await?;
             tokio::fs::write(&local, &data).await?;
             println!("ok");
         }

@@ -4,15 +4,16 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 
+[target.'cfg(not(windows))'.dependencies]
+fuser = "0.14"
+libc = "0.2"
+
 [dependencies]
 dos-client = { path = "../dos-client" }
 dos-core = { path = "../dos-core" }
 tokio.workspace = true
 serde.workspace = true
 serde_json.workspace = true
-
-fuser = "0.14"
-libc = "0.2"
 clap = { version = "4", features = ["derive"] }
 anyhow = "1"
 blake3 = "1"
